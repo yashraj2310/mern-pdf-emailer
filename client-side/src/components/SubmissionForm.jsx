@@ -8,7 +8,7 @@ const SubmissionForm = () => {
         email: '',
         phone: '',
         customId: '',
-        submissionDate: '', // Store as YYYY-MM-DDTHH:mm
+        submissionDate: '', 
     });
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
@@ -24,7 +24,6 @@ const SubmissionForm = () => {
         setMessage('');
         setError('');
 
-        // Basic client-side validation (can be more extensive)
         if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone) {
             setError('Please fill in all required fields.');
             setLoading(false);
@@ -37,22 +36,20 @@ const SubmissionForm = () => {
         }
 
         try {
-            // The backend expects ISO8601 for dates if provided
             const payload = { ...formData };
             if (payload.submissionDate) {
-                // Ensure it's in a format the backend validator can handle (e.g., new Date().toISOString())
-                // For datetime-local input, the value is already mostly in the right format.
+                
             } else {
-                delete payload.submissionDate; // Don't send if empty
+                delete payload.submissionDate; 
             }
             if (!payload.customId) {
-                delete payload.customId; // Don't send if empty
+                delete payload.customId; 
             }
 
 
-            const response = await axios.post('http://localhost:5001/api/submit-form', payload); // Adjust URL if needed
+            const response = await axios.post('http://localhost:5001/api/submit-form', payload); 
             setMessage(response.data.message || 'Submission successful!');
-            setFormData({ // Reset form
+            setFormData({ 
                 firstName: '',
                 lastName: '',
                 email: '',
@@ -62,7 +59,7 @@ const SubmissionForm = () => {
             });
         } catch (err) {
             if (err.response && err.response.data) {
-                if (err.response.data.errors) { // Validation errors from backend
+                if (err.response.data.errors) { 
                     setError(err.response.data.errors.map(e => e.msg).join(', '));
                 } else {
                     setError(err.response.data.message || 'An error occurred during submission.');

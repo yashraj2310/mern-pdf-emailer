@@ -2,21 +2,17 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import puppeteer from 'puppeteer';
 import nodemailer from 'nodemailer';
-import fs from 'fs/promises'; // Using promise-based fs for async/await
-import path from 'path';
+import fs from 'fs/promises'; 
 import { fileURLToPath } from 'url';
-import { dirname, join} from 'path'; // Use join for constructing paths
+import { dirname, join} from 'path'; 
 
-// Import the model (ensure the path is correct and includes .js extension)
 import Submission from '../models/Submission.js';
 
-// Helper to get __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const router = express.Router();
 
-// --- Helper function to replace placeholders in HTML templates ---
 function populateTemplate(templateContent, data) {
     let populatedHtml = templateContent;
     for (const key in data) {
@@ -34,15 +30,13 @@ function populateTemplate(templateContent, data) {
     return populatedHtml;
 }
 
-// --- Nodemailer Transporter Setup ---
 const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
-    port: parseInt(process.env.MAIL_PORT, 10), // Ensure port is a number
+    port: parseInt(process.env.MAIL_PORT, 10), 
     auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
     },
-    // secure: process.env.MAIL_PORT === '465', // true for 465, false for other ports like 587 or 2525
 });
 
 // --- Form Submission Endpoint ---
@@ -77,7 +71,6 @@ router.post(
         };
 
         try {
-            // 1. (Optional) Save to Database
             if (process.env.MONGO_URI) {
                 const newSubmission = new Submission({
                     firstName, lastName, email, phone, customId, submissionDate, systemTimestamp
@@ -94,7 +87,7 @@ router.post(
             const populatedPdfHtml = populateTemplate(pdfHtmlTemplate, formData);
 
             const browser = await puppeteer.launch({
-              headless: true, // 'new' is the default in recent versions, true is fine too
+              headless: true, 
               args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
             const page = await browser.newPage();
